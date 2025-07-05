@@ -10,7 +10,7 @@ import { IoMdCard } from "react-icons/io"; // Import icon from react-icons/io
 import { addThousandSeparator } from '../../utils/helper'; // Import the utility function
 import RecentTransactions from '../../components/Dashboard/RecentTransactions';
 import FinanceOverview from '../../components/Dashboard/FinanceOverview';
-
+import ExpenseTransactions from '../../components/Dashboard/ExpenseTransactions';
 const Home = () => {
   useUserAuth();
   const navigate = useNavigate(); // For programmatic navigation
@@ -40,15 +40,10 @@ const Home = () => {
     }
   };
 
-  // useEffect hook to call fetchDashboardData when the component mounts
   useEffect(() => {
     fetchDashboardData();
-    // The empty dependency array `[]` ensures this runs only once after the initial render.
-    // No cleanup function needed here as it's a one-time fetch.
   }, []);
 
-  // If data is still loading, you might want to show a loading indicator
-  // or a skeleton UI. For simplicity, we'll just render cards with 0 if null.
   if (loading && !dashboardData) {
       return (
           <DashboardLayout activeMenu="Dashboard">
@@ -97,6 +92,10 @@ const Home = () => {
           totalBalance={dashboardData?.totalBalance || 0}
           totalIncome={dashboardData?.totalIncome || 0}
           totalExpense={dashboardData?.totalExpense || 0}
+        />
+        <ExpenseTransactions
+         transactions={dashboardData?.last30DaysExpense?.transactions || []}
+         onSeeMore={() => navigate("/expense")}
         />
         </div>
       </div>
