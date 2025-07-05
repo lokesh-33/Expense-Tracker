@@ -1,0 +1,66 @@
+import React, { useRef, useState } from 'react';
+import { LuUser } from 'react-icons/lu';
+
+const ProfilePhotoSelector = ({ image, setImage }) => {
+    const inputRef = useRef(null);
+    const [previewUrl, setPreviewUrl] = useState(null);
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setImage(file);
+            // Create a preview URL from the file
+            const preview = URL.createObjectURL(file);
+            setPreviewUrl(preview);
+        }
+    };
+
+    const handleRemoveImage = () => {
+        setImage(null);
+        setPreviewUrl(null);
+    };
+    const onChooseFile = () => {
+        inputRef.current.click();
+    };
+
+    return (
+        <div className='flex justify-center mb-6'>
+            <input
+                type="file"
+                accept="image/*"
+                ref={inputRef}
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+            />
+            {!image ? (
+                <div className='w-20 h-20 flex items-center justify-center bg-purple-100 rounded-full relative'>
+                    <LuUser className='text-4xl text-primary' />
+                    <button
+                        type="button"
+                        className='w-8 h-8 flex items-center justify-center bg-purple-800 text-white rounded-full absolute -bottom-1 -right-1'
+                        onClick={onChooseFile}
+                    >
+                        <img src="/assets/images/upload.png" alt="Upload" style={{ width: '24px', height: '24px' }} />
+                    </button>
+                </div>
+            ) : (
+                <div className='relative'>
+                    <img
+                        src={previewUrl}
+                        alt="Profile"
+                        className='w-20 h-20 rounded-full object-cover'
+                    />
+                    <button
+                        type="button"
+                        className='h-8 w-8 flex items-center justify-center bg-red-500 text-white rounded-full absolute -bottom-1 -right-1'
+                        onClick={handleRemoveImage}
+                    >
+                        <img src="/assets/images/delete.png" alt="Delete" style={{ width: '24px', height: '24px' }} />
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default ProfilePhotoSelector;
