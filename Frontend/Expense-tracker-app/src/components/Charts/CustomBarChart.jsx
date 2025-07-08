@@ -42,6 +42,8 @@ const CustomBarChart = ({ data }) => {
     }
     return null;
   };
+  console.log("Chart Data:", data);
+
 
   return (
     <div
