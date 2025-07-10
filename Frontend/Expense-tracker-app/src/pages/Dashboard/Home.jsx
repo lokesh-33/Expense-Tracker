@@ -111,7 +111,7 @@ const Home = () => {
             transactions={dashboardData?.last60DaysIncome.transactions || []}
             onSeeMore={() => navigate("/income")}
           />
-        </div>?
+        </div>
       </div>
     </DashboardLayout>
   );

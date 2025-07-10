@@ -6,8 +6,12 @@ import axiosInstance from '../../utils/axiosInstance';
 import { toast } from 'react-hot-toast';
 import Modal from '../../components/Modal';
 import AddIncomeForm from '../../components/Income/AddIncomeForm';
+import IncomeList from '../../components/Income/IncomeList';
+import DeleteAlert from '../../components/DeleteAlert';
+import useUserAuth from '../../hooks/useUserAuth';
 
 const Income = () => {
+  useUserAuth();
   const [incomeData, setIncomeData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [openDeleteAlert, setOpenDeleteAlert] = useState({
@@ -67,11 +71,34 @@ const Income = () => {
     }
   };
 
-  // TODO: Implement delete logic
-  const deleteIncome = async () => {};
+  // Implement delete logic
+  const deleteIncome = async (id) => {
+    try {
+      await axiosInstance.delete(API_PATHS.INCOME.DELETE_INCOME(id));
+      setOpenDeleteAlert({show:false,data:null});
+      toast.success("Income details deleted Sucessfully");
+      fetchIncomeDetails();
+    }catch(error){
+      console.error("Error in deleting income:",error.response?.data?.message|| error.message);
+    }
+  };
 
-  // TODO: Implement download logic
-  const handleDownloadIncomeDetails = async () => {};
+  const handleDownloadIncomeDetails = async () => {
+      try {
+        const response = await axiosInstance.get(API_PATHS.INCOME.DOWNLOAD_INCOME, {
+          responseType: 'blob', // important for file download
+        });
+  
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'income.xlsx');
+        document.body.appendChild(link);
+        link.click();
+      } catch (error) {
+        toast.error("Failed to download income report.");
+      }
+    };
 
   useEffect(() => {
     fetchIncomeDetails();
@@ -87,6 +114,13 @@ const Income = () => {
               onAddIncome={() => setOpenAddIncomeModal(true)}
             />
           </div>
+          <IncomeList
+            transactions={incomeData}
+            onDelete={(id) => {
+              setOpenDeleteAlert({show: true, data: id});
+            }}
+            onDownload={handleDownloadIncomeDetails}
+          />
         </div>
 
         <Modal
@@ -96,6 +130,16 @@ const Income = () => {
         >
           <AddIncomeForm onAddIncome={handleIncome} />
         </Modal>
+        <Modal
+          isOpen={openDeleteAlert.show}
+          onClose={()=> setOpenDeleteAlert({show: false, data :null})}
+          title="Delete Income"
+            >
+          <DeleteAlert
+            content="Are you sure to delete this Income data"
+            onDelete={()=>deleteIncome(openDeleteAlert.data)}
+          /> 
+        </Modal>  
       </div>
     </DashboardLayout>
   );
