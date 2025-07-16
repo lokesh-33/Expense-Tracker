@@ -3,7 +3,7 @@ import AuthLayout from '../../components/layouts/AuthLayout';
 import Input from '../../components/Inputs/Input';
 import { useNavigate } from 'react-router-dom'; 
 import { Link } from 'react-router-dom';
-import { validateEmail } from '../../utils/helper'; // Import the email validation function
+import { validateEmail } from '../../utils/helper';
 import axiosInstance from '../../utils/axiosInstance';
 import { API_PATHS } from '../../utils/apiPaths';
 import { UserContext } from '../../context/UserContext';
